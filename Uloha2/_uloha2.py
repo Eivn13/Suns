@@ -5,10 +5,10 @@ import numpy as np
 import imageio
 
 
-def load_letter(folder, min_num_images):
+def load_fruit(folder, min_num_images):
     """Load the data for a single letter label."""
     image_files = os.listdir(folder)
-    dataset = np.ndarray(shape=(len(image_files), image_size, image_size, 3),
+    dataset = np.ndarray(shape=(len(image_files), image_size, image_size, ch),
                          dtype=np.float32)
     print(folder)
     print(dataset[0].shape)
@@ -18,7 +18,7 @@ def load_letter(folder, min_num_images):
         try:
             image_data = (imageio.imread(image_file).astype(float) -
                           pixel_depth / 2) / pixel_depth
-            if image_data.shape != (image_size, image_size, 3):
+            if image_data.shape != (image_size, image_size, ch):
                 raise Exception('Unexpected image shape: %s' % str(image_data.shape))
             dataset[num_images, :, :] = image_data
             num_images = num_images + 1
@@ -36,25 +36,16 @@ def load_letter(folder, min_num_images):
     return dataset
 
 
-def load_fruits(path, filename, newfile):
-    images = []
-    for file in os.listdir(path):
-        if (".jpg" in file) or (".png" in file) or (".jpeg" in file):   # ako pozriet ci je image corrupted?
-            imgname = file    # vloz meno
-            img = cv2.imread(path+"/"+imgname)
-            grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            normalizedimg = cv2.normalize(grayimg, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-            images.append(normalizedimg)
-    # skonci sa for, mame vsetky obrazky znormalizovane
-    print(filename)
-    pickle.dump(images, open(enddir+"/"+newfile[0]+" "+newfile[1], "wb"))
+def pickle_me_timbers(newfile, dataset):
+    pickle.dump(dataset, open(enddir+"/"+newfile[0]+" "+newfile[1], "wb"))
 
 
 enddir = os.path.dirname(__file__)
 dirname = enddir[:-6]
-filename = os.path.join(dirname, "Fruits/fruits/fruits-360")
+filename = os.path.join(dirname, "Fruits")
 image_size = 100
-pixel_depth = 3
+pixel_depth = 255
+ch = 3
 
 for parent in os.listdir(filename):
     if ("Test" in parent) or ("Training" in parent):
@@ -67,5 +58,5 @@ for parent in os.listdir(filename):
             except IndexError:
                 array = [newfile[0], parent]
                 newfile = array
-            # load_fruits(filename+"/"+parent+"/"+foldername, nameoffile, newfile)
-            load_letter(filename+"/"+parent+"/"+foldername, 100)
+            dataset = load_fruit(filename+"/"+parent+"/"+foldername, 100)
+            pickle_me_timbers(newfile, dataset)
