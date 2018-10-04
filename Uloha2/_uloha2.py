@@ -1,31 +1,73 @@
 import pickle
 import cv2
 import os
+import numpy as np
 
 
-def picklemaker(path, filename):
-    images = []
-    for file in os.listdir(path):
-        # predpokladajme ze path prisiel nakonci s /
-        if (".jpg" in file) or (".png" in file) or (".jpeg" in file):   # ako pozriet ci je image corrupted?
-            imgname = file    # vloz meno
-            img = cv2.imread(path+"/"+imgname)
-            grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            normalizedimg = cv2.normalize(grayimg, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-            images.append(normalizedimg)
-    # skonci sa for, mame vsetky obrazky znormalizovane
-    print(filename)
-    pickle.dump(images, open(enddir+"/"+filename, "wb"))
+def load_fruits(folder, min_num_images):
+    image_files = os.listdir(folder)
+    diff = len(image_files) - 100
+    image_files = image_files[:-diff]
+    dataset = np.ndarray(shape=(100, image_size, image_size, ch),
+                         dtype=np.float32)
+    # print(folder)
+    num_images = 0
+    for image in image_files:
+        image_file = os.path.join(folder, image)
+        try:
+            img = cv2.imread(image_file, cv2.IMREAD_COLOR)
+            image_data = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+            cv2.imshow('window', image_data)
+            cv2.waitKey(0)
+            if image_data.shape != (image_size, image_size, ch):
+                raise Exception('Unexpected image shape: %s' % str(image_data.shape))
+            dataset[num_images, :, :] = image_data
+            num_images = num_images + 1
+        except (IOError, ValueError) as e:
+            print('Could not read:', image_file, ':', e, '- it\'s ok, skipping.')
+
+    dataset = dataset[0:num_images, :, :]
+    if num_images < min_num_images:
+        raise Exception('Many fewer images than expected: %d < %d' %
+                        (num_images, min_num_images))
+
+    print('Full dataset tensor:', dataset.shape)
+    print('Mean:', np.mean(dataset))
+    print('Standard deviation:', np.std(dataset))
+    return dataset
+
+
+def pickle_me_timbers(newfile, dataset):
+    # print(enddir+"/"+newfile[0]+" "+newfile[1])
+    if os.path.exists(enddir+"/"+newfile[0]+" "+newfile[1]):
+        print("%s dataset exists - Skipping pickling." % newfile[0])
+    else:
+        pickle.dump(dataset, open(enddir+"/"+newfile[0]+" "+newfile[1], "wb"))
 
 
 enddir = os.path.dirname(__file__)
 dirname = enddir[:-6]
-filename = os.path.join(dirname, "Fruits/fruits/fruits-360")
+filename = os.path.join(dirname, "Fruits")
+image_size = 100
+pixel_depth = 255
+ch = 3
+
 for parent in os.listdir(filename):
     if ("Test" in parent) or ("Training" in parent):
         for foldername in os.listdir(filename+"/"+parent):
             nameoffile = foldername+" "+parent+".p"
-            picklemaker(filename+"/"+parent+"/"+foldername, nameoffile)
+            newfile = foldername
+            newfile = newfile.split()
+            try:
+                newfile[1] = parent
+            except IndexError:
+                array = [newfile[0], parent]
+                newfile = array
+            dataset = load_fruits(filename+"/"+parent+"/"+foldername, 100)
+            pickle_me_timbers(newfile, dataset)
 
-
-# TODO: image corrupted, pozriet ci je spravne dane do pola
+# wstack
+# hstack
+# treba spravit,ze ked je 5 druhov jablk a chceme 200 obrazkov z jedneho nad druhu tak 200/5 pre kazde jabko
+# potom z treningu vybrat obrazky v pomere 80/20 trening valid a test nechat tak
+# vysledok maju byt 3 pickle subory
