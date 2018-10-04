@@ -31,10 +31,6 @@ def load_fruits(folder, min_num_images):
         raise Exception('Many fewer images than expected: %d < %d' %
                         (num_images, min_num_images))
 
-    print('Full dataset tensor:', dataset.shape)
-    print('Mean:', np.mean(dataset))
-    print('Standard deviation:', np.std(dataset))
-    return dataset
 
 
 def pickle_me_timbers(newfile, dataset):
@@ -47,11 +43,7 @@ def pickle_me_timbers(newfile, dataset):
 
 enddir = os.path.dirname(__file__)
 dirname = enddir[:-6]
-filename = os.path.join(dirname, "Fruits")
-image_size = 100
-pixel_depth = 255
-ch = 3
-
+filename = os.path.join(dirname, "Fruits/fruits/fruits-360")
 for parent in os.listdir(filename):
     if ("Test" in parent) or ("Training" in parent):
         for foldername in os.listdir(filename+"/"+parent):
