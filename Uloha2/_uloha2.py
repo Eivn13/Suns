@@ -17,8 +17,6 @@ def load_fruits(folder, min_num_images):
         try:
             img = cv2.imread(image_file, cv2.IMREAD_COLOR)
             image_data = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-            cv2.imshow('window', image_data)
-            cv2.waitKey(0)
             if image_data.shape != (image_size, image_size, ch):
                 raise Exception('Unexpected image shape: %s' % str(image_data.shape))
             dataset[num_images, :, :] = image_data
@@ -32,7 +30,6 @@ def load_fruits(folder, min_num_images):
                         (num_images, min_num_images))
 
 
-
 def pickle_me_timbers(newfile, dataset):
     # print(enddir+"/"+newfile[0]+" "+newfile[1])
     if os.path.exists(enddir+"/"+newfile[0]+" "+newfile[1]):
@@ -41,6 +38,8 @@ def pickle_me_timbers(newfile, dataset):
         pickle.dump(dataset, open(enddir+"/"+newfile[0]+" "+newfile[1], "wb"))
 
 
+image_size = 100
+ch = 3
 enddir = os.path.dirname(__file__)
 dirname = enddir[:-6]
 filename = os.path.join(dirname, "Fruits/fruits/fruits-360")
