@@ -38,15 +38,35 @@ def pickle_me_timbers(newfile, dataset):
         pickle.dump(dataset, open(enddir+"/"+newfile[0]+" "+newfile[1], "wb"))
 
 
+def count_subclasses(path):
+    if len(subclasses_count) is 0:
+        # count logic here
+        for folder in os.listdir(path):
+            name = folder
+            name = name.split()
+            key = name[0]
+            if subclasses_count.get(key) is None:
+                subclasses_count[key] = 1
+            else:
+                subclasses_count[key] += 1
+        return subclasses_count
+    else:
+        print("Subclasses already counted")
+
+
+num_of_images_test = 100
+num_of_images_training = 100
+num_of_images_validation = 100
 image_size = 100
 ch = 3
+subclasses_count = {}
 enddir = os.path.dirname(__file__)
 dirname = enddir[:-6]
-filename = os.path.join(dirname, "Fruits/fruits/fruits-360")
+filename = os.path.join(dirname, "Fruits")
 for parent in os.listdir(filename):
     if ("Test" in parent) or ("Training" in parent):
+        count_subclasses(filename+"/"+parent)
         for foldername in os.listdir(filename+"/"+parent):
-            nameoffile = foldername+" "+parent+".p"
             newfile = foldername
             newfile = newfile.split()
             try:
@@ -54,10 +74,11 @@ for parent in os.listdir(filename):
             except IndexError:
                 array = [newfile[0], parent]
                 newfile = array
+            # check if test or training, get num_of_images accordingly
             dataset = load_fruits(filename+"/"+parent+"/"+foldername, 100)
             pickle_me_timbers(newfile, dataset)
 
-# wstack
+# vstack
 # hstack
 # treba spravit,ze ked je 5 druhov jablk a chceme 200 obrazkov z jedneho nad druhu tak 200/5 pre kazde jabko
 # potom z treningu vybrat obrazky v pomere 80/20 trening valid a test nechat tak
