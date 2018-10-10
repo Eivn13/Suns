@@ -1,20 +1,15 @@
 import os
-import numpy as np
+import numpy
 import pickle
-from random import shuffle
-
-# nacitaj data z picklov
-
-# rozdel trening na training a validation 160-40
-
-# zakoduj triedy na indexy, potom poprehadzuj indexy?
 
 
-def randomize(dataset, labels):
-    permutation = np.random.permutation(labels.shape[0])
-    shuffled_dataset = dataset[permutation, :, :]
-    shuffled_labels = labels[permutation]
-    return shuffled_dataset, shuffled_labels
+def randomize_two_arrays(a, b):
+    rng_state = numpy.random.get_state()
+    numpy.random.set_state(rng_state)
+    numpy.random.shuffle(a)
+    numpy.random.set_state(rng_state)
+    numpy.random.shuffle(b)
+    return a, b
 
 
 enddir = os.path.dirname(__file__)
@@ -33,36 +28,41 @@ for fruit in os.listdir(enddir):
     fruitname = fruit[0]
     datatype = fruit[1]
     if datatype == "Test":
-        dataset_test.append(array)
+        dataset_test.extend(array)
+        fruitname = [fruitname] * 40
         labels_test.extend(fruitname)
     if datatype == "Training":
         data_train = array[:160]
         data_valid = array[160:]
-        dataset_training.append(data_train)
+        dataset_training.extend(data_train)
+        f = fruitname
+        fruitname = [f] * 160
         labels_training.extend(fruitname)
-        dataset_validation.append(data_valid)
-        labels_valid.extend(fruitname)
+        dataset_validation.extend(data_valid)
+        fruitname_valid = [f] * 40
+        labels_valid.extend(fruitname_valid)
 
 # shuffle
-train_dataset, labels_training = randomize(dataset_training, labels_training)
-test_dataset, labels_test = randomize(dataset_test, labels_test)
-valid_dataset, labels_valid = randomize(dataset_validation, labels_valid)
+dataset_training, labels_training = randomize_two_arrays(dataset_training, labels_training)
+dataset_validation_valid, labels_valid = randomize_two_arrays(dataset_validation, labels_valid)
+dataset_test, labels_test = randomize_two_arrays(dataset_test, labels_test)
 
-# save
 save_training = {
-    "dataset_training": train_dataset,
-    "labels_training": labels_training,
-}
-save_test = {
-    "dataset_test": test_dataset,
-    "labels_test": labels_test,
-}
-save_validation = {
-    "dataset_validation": valid_dataset,
-    "labels_valid": labels_valid,
+    "dataset training": dataset_training,
+    "labels training": labels_training
 }
 
-pickle.dump(save_training, open(os.path.dirname(__file__)+"/dataset_training", "wb"))
-pickle.dump(save_validation, open(os.path.dirname(__file__)+"/dataset_validation", "wb"))
-pickle.dump(save_test, open(os.path.dirname(__file__)+"/dataset_test", "wb"))
+save_validation = {
+    "dataset validation": dataset_validation,
+    "labels validation": labels_valid,
+}
+
+save_test = {
+    "dataset test": dataset_test,
+    "labels test": labels_test
+}
+
+pickle.dump(save_training, open(os.path.dirname(__file__)+"/dataset training", "wb"))
+pickle.dump(save_validation, open(os.path.dirname(__file__)+"/dataset validation", "wb"))
+pickle.dump(save_test, open(os.path.dirname(__file__)+"/dataset test", "wb"))
 
