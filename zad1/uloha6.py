@@ -26,5 +26,5 @@ for parent in os.listdir(end_dir):
             plt.subplot(224), plt.imshow((img3 * 255).astype(np.uint8)), plt.title(labels[3 + x])
 
             plt.tight_layout()
-            plt.waitforbuttonpress(15)
+            plt.waitforbuttonpress(30)
             plt.close()

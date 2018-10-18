@@ -37,5 +37,5 @@ for parent in os.listdir(end_dir):
 
         plt.tight_layout()
         plt.imshow(img0)
-        plt.waitforbuttonpress(5)
+        plt.waitforbuttonpress(15)
         plt.close()
