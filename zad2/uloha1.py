@@ -26,6 +26,7 @@ def euklid(image_array, name_of_dataset):
     # 1 img porovnat so vsetkymi, 2 img porovnat so vsetkymi okrem prveho atd...
     # spravit sumu na variabli diff a to si ulozit a potom si povedat ze ked je euklidovska je napr 300k > tak to
     # znamena ze nepatri do classy
+    # cv2.resize na zmensenie obrazku 4x napr
 
 
 enddir = os.path.dirname(__file__)[:-4]
