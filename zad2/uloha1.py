@@ -6,31 +6,34 @@ import cv2
 
 def euklid(image_array, name_of_dataset):
     if "Training" in name_of_dataset:
-        max_images = 200
+        max_images = 50
     else:
-        max_images = 40
+        max_images = 10
     
-    avg_img = np.ndarray(shape=(100, 100, 3), dtype=np.float32)
+    avg_img = np.zeros(shape=(50, 50, 3), dtype=np.float32)
     array = []
     avg_array = []
     
     for image in image_array:
+        image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
         avg_img = avg_img + image
     
     avg_img = avg_img/max_images
 
-    for n in range(0, max_images):  
-        image = image_array[n]
-        avg_array.append(cv2.norm(next_image, avg_image, 4))    # C
+    n = 0
+    for image in image_array:
+        image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
+        avg_array.append(cv2.norm(image, avg_img, 4))    # C
         iterator = 1 + n
         while iterator < max_images:
             next_image = image_array[iterator]
-            diff_image = image - next_image
-            # asi bug, preco porovnavam next_image a odpocitane img a next image?
-            euklidean = cv2.norm(next_image, diff_image, 4) # porovnaj vzdialenost od dalsieho obrazku
+            next_image = cv2.resize(next_image, (0, 0), fx=0.5, fy=0.5)
+            euklidean = cv2.norm(image, next_image, 4)  # porovnaj vzdialenost od dalsieho obrazku
             array.append(euklidean)
             iterator += 1
-            
+            print(iterator)
+        n = n + 1
+
     global statistical_data
     statistical_data.append(array)
     statistical_data.append("C")
