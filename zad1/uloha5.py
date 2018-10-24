@@ -43,9 +43,9 @@ for fruit in os.listdir(enddir):
         labels_valid.extend(fruitname_valid)
 
 # shuffle
-dataset_training, labels_training = randomize_two_arrays(dataset_training, labels_training)
-dataset_validation_valid, labels_valid = randomize_two_arrays(dataset_validation, labels_valid)
-dataset_test, labels_test = randomize_two_arrays(dataset_test, labels_test)
+# dataset_training, labels_training = randomize_two_arrays(dataset_training, labels_training)
+# dataset_validation_valid, labels_valid = randomize_two_arrays(dataset_validation, labels_valid)
+# dataset_test, labels_test = randomize_two_arrays(dataset_test, labels_test)
 
 save_training = {
     "dataset training": dataset_training,
