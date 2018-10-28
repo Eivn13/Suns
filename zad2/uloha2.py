@@ -17,7 +17,7 @@ for image in image_array["dataset validation"]:
     n = n + 1
 
 
-kmeans_cluster = KMeans(n_clusters=8)
+kmeans_cluster = KMeans(verbose=1)
 
 print(dataset.shape)
 
@@ -42,10 +42,10 @@ n = 241
 for img in image_cluster:
     tmp = img.astype(np.float32)
     img = cv2.cvtColor(tmp, cv2.COLOR_BGR2RGB)
-    plt.subplot(n), plt.imshow(img), plt.title(cluster_labels[n-240])
+    plt.subplot(n), plt.imshow(img)
     if n < 249:
         n = n + 1
 
 plt.tight_layout()
-plt.waitforbuttonpress(30)
+plt.waitforbuttonpress(300000)
 plt.close()
