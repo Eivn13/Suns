@@ -42,7 +42,7 @@ n = 241
 for img in image_cluster:
     tmp = img.astype(np.float32)
     img = cv2.cvtColor(tmp, cv2.COLOR_BGR2RGB)
-    plt.subplot(n), plt.imshow(img)
+    plt.subplot(n), plt.imshow(img), plt.title("Trieda: " + str(n-241))
     if n < 249:
         n = n + 1
 

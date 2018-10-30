@@ -16,7 +16,7 @@ for image in image_array["dataset validation"]:
     dataset[n] = tmp.reshape(x*y*z)
     n = n + 1
 
-clustering = DBSCAN(eps=10, min_samples=4, n_jobs=4).fit(dataset)
+clustering = DBSCAN(eps=10, min_samples=40, n_jobs=4).fit(dataset)
 labels = np.unique(clustering.labels_)
 print(labels-1)
 
