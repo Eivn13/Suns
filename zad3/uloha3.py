@@ -4,26 +4,33 @@ from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 import random
 import matplotlib.pyplot as plt
-from sklearn.model_selection import learning_curve
+import numpy as np
 
 
 def mlp(dataset, size):
     clf = MLPClassifier(solver="adam",
-                        hidden_layer_sizes=(1, 5), max_iter=5000, learning_rate_init=0.8, learning_rate="invscaling")
+                        hidden_layer_sizes=(1, 5), max_iter=1000, learning_rate_init=0.003, learning_rate="invscaling")
     X = []
     y = []
     n = 1
     for x in dataset:
         if size < n:
             break
-        X.append(x[0].reshape(100*100*3))
+        X.append(x[0])
         y.append(x[1])
         n += 1
     print(y)
-    clf.fit(X, y)
+    model = clf.fit(X, y)
+    plot_loss = np.asarray(model.loss_curve_)
+    plt.plot(plot_loss)
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.show()
     global test
     skuska = clf.predict(test)
     print(skuska)
+    print("Loss: 1, " + str(plot_loss[0]) + " 2, " + str(plot_loss[1]) + " 3, " + str(plot_loss[2]) + " ..." +
+          str(len(plot_loss)) + "-th, " + str(plot_loss[-1]))
     # plt.plot(skuska.)
 
 
@@ -48,7 +55,7 @@ def make_dataset():
             for image in data:
                 if n == size_of_sample:
                     break
-                dataset.append(tuple((image, clss[0])))
+                dataset.append(tuple((image.reshape(100*100*3), clss[0])))
                 n += 1
             size_of_sample = 104
         else:
@@ -61,7 +68,7 @@ def make_dataset():
 
 def compute():
     make_dataset()
-    mlp(dataset, 50)
+    mlp(dataset, 5)
     # support_vector_machine(dataset)
 
     " tu sa bude volat svm 1 svm 2 mlp 1 mlp 2"
