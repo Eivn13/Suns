@@ -15,7 +15,7 @@ def mlp(dataset, size, hidden_layer):
         clf = MLPClassifier(solver="adam",
                             hidden_layer_sizes=hidden_layer,
                             max_iter=5000,
-                            learning_rate_init=0.0003,
+                            learning_rate_init=0.003,
                             learning_rate="adaptive",
                             activation='relu',
                             alpha=0.1,
@@ -76,7 +76,7 @@ def support_vector_machine(dataset, size, krnl):
         labels = y[x:x + jump]
         del X[x:x + jump], y[x:x + jump]
 
-        clf = svm.SVC(kernel=krnl, cache_size=4000)
+        clf = svm.SVC(kernel=krnl, cache_size=4000, gamma="scale")
         clf.fit(X, y)
         skuska = clf.predict(data)
         n = 0
@@ -87,7 +87,7 @@ def support_vector_machine(dataset, size, krnl):
             n += 1
 
         priem_chybovost += chyba/(jump/100)
-        print("Velkost trenovacich dat: " + str(size) + ", " + "pocet chyb: " + str(chyba))
+        print("Velkost trenovacich dat: " + str(size-jump) + ", " + "pocet chyb: " + str(chyba))
         pickle.dump(clf, open("./model_clf_svm_" + krnl, "wb"))
 
     return 100 - (priem_chybovost / 5)
@@ -117,7 +117,7 @@ def make_dataset():
 
 def compute():
     make_dataset()
-    one_hidden = tuple((25, ))
+    one_hidden = tuple((100, ))
     n_hidden = tuple((50, 40, 30))
     ds = [50, 100, 200, 1000, 5000]
     array = [mlp(dataset, ds[0], one_hidden), mlp(dataset, ds[1], one_hidden), mlp(dataset, ds[2], one_hidden),
@@ -143,8 +143,9 @@ def compute():
              support_vector_machine(dataset, ds[4], "rbf")]
     plt.plot([50, 100, 200, 1000, 5000], array)
 
-    plt.legend(["1 hidden layer with 25 neurons", "3 hidden layers with 50, 40, 30 neurons",
+    plt.legend(["1 hidden layer with 100 neurons", "3 hidden layers with 50, 40, 30 neurons",
                 "SVM linear", "SVM rbf"])
+    plt.show()
 
 
 dataset = []
